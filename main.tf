@@ -1,9 +1,13 @@
 provider "aws" {
   region = "${var.region}"
 }
+provider "consul" {
+  address    = "http://localhost:8500"
+  datacenter = "dc1"
+}
 terraform {
   backend "s3" {
-    bucket = "mario21ic.terraform.state"
+    bucket = "poc.terraform.state"
     key = "infrav1/terraform.tfstate"
     region = "us-west-2"
   }
@@ -19,6 +23,18 @@ output "ip" {
 
 output "sg_id" {
   value = "${module.web.sg_id}"
+}
+
+output "web_sg_id" {
+ value = "${data.consul_keys.read_web_sg_id.var.web_sg_id}"
+}
+
+output "web_ip" {
+ value = "${data.consul_keys.read_web_ip.var.web_ip}"
+}
+
+output "web_elb_id" {
+ value = "${data.consul_keys.read_web_elb_id.var.web_elb_id}"
 }
 
 module "web" {
